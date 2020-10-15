@@ -14,10 +14,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 api = Api(app)
 jwt = JWT(app, authenticate, identity)
 
-@app.before_first_request
-def create_tables():
-    db.create_all()
-
 api.add_resource(Event, '/event/<name>')
 api.add_resource(EventList, '/events')
 api.add_resource(Story, '/story/<name>')
