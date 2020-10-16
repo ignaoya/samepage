@@ -18,13 +18,15 @@ class Story(Resource):
         "event_id", type=int, required=True, help=BLANK_ERROR.format("event_id")
     )
 
-    def get(self, name: str):
+    @classmethod
+    def get(cls, name: str):
         story = StoryModel.find_by_name(name)
         if story:
             return story.json()
         return {"message": STORY_ERROR}, 400
 
-    def post(self, name: str):
+    @classmethod
+    def post(cls, name: str):
         if StoryModel.find_by_name(name):
             return {"message": f"A story with name '{name}' already exists."}, 400
         else:
@@ -36,13 +38,15 @@ class Story(Resource):
                 return {"message": "An error occurred inserting story."}, 500
             return story.json(), 201
 
-    def delete(self, name: str):
+    @classmethod
+    def delete(cls, name: str):
         story = StoryModel.find_by_name(name)
         if story:
             story.delete_from_db()
         return {"message": "Story deleted."}
 
-    def put(self, name: str):
+    @classmethod
+    def put(cls, name: str):
         data = Story.parser.parse_args()
         story = StoryModel.find_by_name(name)
         if story is None:
@@ -58,13 +62,14 @@ class Story(Resource):
 
 
 class StoryList(Resource):
-    def get(self):
+    @classmethod
+    def get(cls):
         return {"stories": [story.json() for story in StoryModel.find_all()]}
 
 
 class EventStoryList(Resource):
-    def get(self, name: str):
-        # return {'stories': [story.json() for story in StoryModel.query.all()]}
+    @classmethod
+    def get(cls, name: str):
         return {
             "stories": [story.json() for story in EventModel.find_by_name(name).stories]
         }

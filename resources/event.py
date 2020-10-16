@@ -5,13 +5,15 @@ EVENT_ERROR = "Event not found"
 SERVER_ERROR = "Internal Server Error"
 
 class Event(Resource):
-    def get(self, name: str):
+    @classmethod
+    def get(cls, name: str):
         event = EventModel.find_by_name(name)
         if event:
             return event.json()
         return {"message": EVENT_ERROR}, 404
 
-    def post(self, name: str):
+    @classmethod
+    def post(cls, name: str):
         if EventModel.find_by_name(name):
             return {"message": f"An event with name '{name}' already exists."}, 400
 
@@ -23,7 +25,8 @@ class Event(Resource):
 
         return event.json(), 201
 
-    def delete(self, name: str):
+    @classmethod
+    def delete(cls, name: str):
         event = EventModel.find_by_name(name)
         if event:
             event.delete_from_db()
@@ -31,5 +34,6 @@ class Event(Resource):
 
 
 class EventList(Resource):
-    def get(self):
+    @classmethod
+    def get(cls):
         return {"events": [event.json() for event in EventModel.find_all()]}

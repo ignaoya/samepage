@@ -11,7 +11,8 @@ class UserRegister(Resource):
     parser.add_argument("username", type=str, required=True, help=HELP_TEXT)
     parser.add_argument("password", type=str, required=True, help=HELP_TEXT)
 
-    def post(self):
+    @classmethod
+    def post(cls):
         data = UserRegister.parser.parse_args()
         user = UserModel.find_by_username(data["username"])
         if user:
