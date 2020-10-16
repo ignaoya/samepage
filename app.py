@@ -6,7 +6,7 @@ from flask_jwt import JWT
 from security import authenticate, identity
 from resources.user import UserRegister
 from resources.event import Event, EventList
-from resources.story import Story, StoryList
+from resources.story import Story, StoryList, EventStoryList
 
 app = Flask(__name__)
 app.secret_key = "$am3+Pag3+K3y"
@@ -16,6 +16,11 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 api = Api(app)
 jwt = JWT(app, authenticate, identity)
+
+# Uncomment below three lines for local testing
+#@app.before_first_request
+#def create_tables():
+#    db.create_all()
 
 api.add_resource(Event, "/event/<name>")
 api.add_resource(EventList, "/events")
@@ -29,3 +34,4 @@ if __name__ == "__main__":
 
     db.init_app(app)
     app.run(port=5000, debug=True)
+
