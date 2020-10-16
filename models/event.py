@@ -4,7 +4,7 @@ class EventModel(db.Model):
     __tablename__ = 'events'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80))
+    name = db.Column(db.String(80), unique=True)
 
     stories = db.relationship('StoryModel', lazy=True)
 
