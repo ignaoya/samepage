@@ -19,11 +19,11 @@ class EventModel(db.Model):
         return {'id': self.id, 'name': self.name, 'stories': [story.json() for story in self.stories]}
 
     @classmethod
-    def find_by_name(cls, name: str):
+    def find_by_name(cls, name: str) -> "EventModel":
         return cls.query.filter_by(name=name).first()
 
     @classmethod
-    def find_all(cls) -> List:
+    def find_all(cls) -> List["EventModel"]:
         return cls.query.all()
 
     def save_to_db(self) -> None:

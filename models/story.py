@@ -24,11 +24,11 @@ class StoryModel(db.Model):
         return {'title': self.title, 'origin': self.origin, 'link': self.link, 'event_id': self.event_id}
 
     @classmethod
-    def find_by_name(cls, name: str):
+    def find_by_name(cls, name: str) -> "StoryModel":
         return cls.query.filter_by(title=name).first()
 
     @classmethod
-    def find_all(cls) ->List:
+    def find_all(cls) ->List["StoryModel"]:
         return cls.query.all()
 
     def save_to_db(self) -> None:
