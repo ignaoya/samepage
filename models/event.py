@@ -4,19 +4,24 @@ from models.story import StoryJSON
 
 EventJSON = Dict[str, Union[int, str, List[StoryJSON]]]
 
+
 class EventModel(db.Model):
-    __tablename__ = 'events'
+    __tablename__ = "events"
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True)
 
-    stories = db.relationship('StoryModel', lazy=True)
+    stories = db.relationship("StoryModel", lazy=True)
 
     def __init__(self, name: str):
         self.name = name
 
     def json(self) -> EventJSON:
-        return {'id': self.id, 'name': self.name, 'stories': [story.json() for story in self.stories]}
+        return {
+            "id": self.id,
+            "name": self.name,
+            "stories": [story.json() for story in self.stories],
+        }
 
     @classmethod
     def find_by_name(cls, name: str) -> "EventModel":
