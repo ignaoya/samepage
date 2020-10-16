@@ -3,24 +3,26 @@ from flask_jwt import jwt_required
 from models.story import StoryModel
 from models.event import EventModel
 
+BLANK_ERROR = "{} cannot be blank."
+STORY_ERROR = "Story not found"
 
 class Story(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument(
-        "origin", type=str, required=True, help="This field cannot be empty."
+        "origin", type=str, required=True, help=BLANK_ERROR.format("origin")
     )
     parser.add_argument(
-        "link", type=str, required=True, help="This field cannot be empty."
+        "link", type=str, required=True, help=BLANK_ERROR.format("link")
     )
     parser.add_argument(
-        "event_id", type=int, required=True, help="This field cannot be empty."
+        "event_id", type=int, required=True, help=BLANK_ERROR.format("event_id")
     )
 
     def get(self, name: str):
         story = StoryModel.find_by_name(name)
         if story:
             return story.json()
-        return {"message": "Story not found"}, 400
+        return {"message": STORY_ERROR}, 400
 
     def post(self, name: str):
         if StoryModel.find_by_name(name):
