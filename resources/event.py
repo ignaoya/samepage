@@ -1,13 +1,15 @@
 from flask_restful import Resource
 from models.event import EventModel
 
+EVENT_ERROR = "Event not found"
+SERVER_ERROR = "Internal Server Error"
 
 class Event(Resource):
     def get(self, name: str):
         event = EventModel.find_by_name(name)
         if event:
             return event.json()
-        return {"message": "Event not found"}, 404
+        return {"message": EVENT_ERROR}, 404
 
     def post(self, name: str):
         if EventModel.find_by_name(name):
@@ -17,7 +19,7 @@ class Event(Resource):
         try:
             event.save_to_db()
         except:
-            return {"message": "Internal Server Error"}, 500
+            return {"message": SERVER_ERROR}, 500
 
         return event.json(), 201
 
