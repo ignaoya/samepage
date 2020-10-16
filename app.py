@@ -18,7 +18,8 @@ jwt = JWT(app, authenticate, identity)
 api.add_resource(Event, '/event/<name>')
 api.add_resource(EventList, '/events')
 api.add_resource(Story, '/story/<name>')
-api.add_resource(StoryList, '/stories/<name>')
+api.add_resource(StoryList, '/stories')
+api.add_resource(EventStoryList, '/stories/<name>')
 api.add_resource(UserRegister, '/register')
 
 if __name__ == '__main__':

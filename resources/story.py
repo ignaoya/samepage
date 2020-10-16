@@ -48,6 +48,10 @@ class Story(Resource):
         return story.json()
 
 class StoryList(Resource):
+    def get(self):
+        return {'stories': [story.json() for story in StoryModel.find_all()]}
+
+class EventStoryList(Resource):
     def get(self, name):
         #return {'stories': [story.json() for story in StoryModel.query.all()]}
         return {'stories': [story.json() for story in EventModel.find_by_name(name).stories]}

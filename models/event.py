@@ -1,3 +1,4 @@
+from typing import Dict, List
 from db import db
 
 class EventModel(db.Model):
@@ -8,20 +9,24 @@ class EventModel(db.Model):
 
     stories = db.relationship('StoryModel', lazy=True)
 
-    def __init__(self, name):
+    def __init__(self, name: str):
         self.name = name
 
-    def json(self):
+    def json(self) -> Dict:
         return {'id': self.id, 'name': self.name, 'stories': [story.json() for story in self.stories]}
 
     @classmethod
-    def find_by_name(cls, name):
+    def find_by_name(cls, name: str):
         return cls.query.filter_by(name=name).first()
 
-    def save_to_db(self):
+    @classmethod
+    def find_all(cls) -> List:
+        return cls.query.all()
+
+    def save_to_db(self) -> None:
         db.session.add(self)
         db.session.commit()
 
-    def delete_from_db(self):
+    def delete_from_db(self) -> None:
         db.session.delete(self)
         db.session.commit()

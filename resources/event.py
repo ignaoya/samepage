@@ -29,5 +29,5 @@ class Event(Resource):
 
 class EventList(Resource):
     def get(self):
-        return {'events': [event.json() for event in EventModel.query.all()]}
+        return {'events': [event.json() for event in EventModel.find_all()]}
 
