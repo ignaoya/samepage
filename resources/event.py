@@ -2,13 +2,13 @@ from flask_restful import Resource
 from models.event import EventModel
 
 class Event(Resource):
-    def get(self, name):
+    def get(self, name: str):
         event = EventModel.find_by_name(name)
         if event:
             return event.json()
         return {'message': 'Event not found'}, 404
 
-    def post(self, name):
+    def post(self, name: str):
         if EventModel.find_by_name(name):
             return {'message': f"An event with name '{name}' already exists."}, 400
 
@@ -20,7 +20,7 @@ class Event(Resource):
 
         return event.json(), 201
 
-    def delete(self, name):
+    def delete(self, name: str):
         event = EventModel.find_by_name(name)
         if event:
             event.delete_from_db()
