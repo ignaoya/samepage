@@ -1,6 +1,8 @@
-from typing import Dict, List
+from typing import Dict, List, Union
 
 from db import db
+
+StoryJSON = Dict[str, Union[int, str]]
 
 class StoryModel(db.Model):
     __tablename__ = 'stories'
@@ -18,8 +20,8 @@ class StoryModel(db.Model):
         self.link = link
         self.event_id = event_id
 
-    def json(self) -> Dict:
-        return {'title': self.title, 'origin': self.origin, 'link': self.link}
+    def json(self) -> StoryJSON:
+        return {'title': self.title, 'origin': self.origin, 'link': self.link, 'event_id': self.event_id}
 
     @classmethod
     def find_by_name(cls, name: str):
