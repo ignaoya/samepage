@@ -1,28 +1,22 @@
-from flask_restful import Resource, reqparse
+from flask_restful import Resource
+from flask import request
 from flask_jwt import jwt_required
 from models.story import StoryModel
 from models.event import EventModel
+from marshmallow import ValidationError
+from schemas.story import StorySchema
 
-BLANK_ERROR = "{} cannot be blank."
 STORY_ERROR = "Story not found"
 
-class Story(Resource):
-    parser = reqparse.RequestParser()
-    parser.add_argument(
-        "origin", type=str, required=True, help=BLANK_ERROR.format("origin")
-    )
-    parser.add_argument(
-        "link", type=str, required=True, help=BLANK_ERROR.format("link")
-    )
-    parser.add_argument(
-        "event_id", type=int, required=True, help=BLANK_ERROR.format("event_id")
-    )
+story_schema = StorySchema()
+story_list_schema = StorySchema(many=True)
 
+class Story(Resource):
     @classmethod
     def get(cls, name: str):
         story = StoryModel.find_by_name(name)
         if story:
-            return story.json()
+            return story_schema.dump(story)
         return {"message": STORY_ERROR}, 400
 
     @classmethod
@@ -30,12 +24,19 @@ class Story(Resource):
         if StoryModel.find_by_name(name):
             return {"message": f"A story with name '{name}' already exists."}, 400
         else:
-            data = Story.parser.parse_args()
-            story = StoryModel(name, **data)
+            story_json = request.get_json()
+            story_json["name"] = name
+
+            try:
+                story = story_schema.load(story_json)
+            except ValidationError as err:
+                return err.messages, 400
+
             try:
                 story.save_to_db()
             except:
                 return {"message": "An error occurred inserting story."}, 500
+
             return story.json(), 201
 
     @classmethod
@@ -47,14 +48,18 @@ class Story(Resource):
 
     @classmethod
     def put(cls, name: str):
-        data = Story.parser.parse_args()
+        story_json = request.get_json()
         story = StoryModel.find_by_name(name)
         if story is None:
-            story = StoryModel(name, **data)
+            story_json["name"] = name
+            try:
+                story = story_schema.load(story_json)
+            except ValidationError as err:
+                return err.messages, 400
         else:
-            story.origin = data["origin"]
-            story.link = data["link"]
-            story.event_id = data["event_id"]
+            story.origin = story_json["origin"]
+            story.link = story_json["link"]
+            story.event_id = story_json["event_id"]
 
         story.save_to_db()
 
@@ -64,12 +69,12 @@ class Story(Resource):
 class StoryList(Resource):
     @classmethod
     def get(cls):
-        return {"stories": [story.json() for story in StoryModel.find_all()]}
+        return {"stories": story_list_schema.dump(StoryModel.find_all())}
 
 
 class EventStoryList(Resource):
     @classmethod
     def get(cls, name: str):
         return {
-            "stories": [story.json() for story in EventModel.find_by_name(name).stories]
-        }
+            "stories": [story_schema.dump(story) for story in EventModel.find_by_name(name).stories]
+        }, 200

@@ -15,20 +15,6 @@ class StoryModel(db.Model):
     event_id = db.Column(db.Integer, db.ForeignKey("events.id"))
     event = db.relationship("EventModel")
 
-    def __init__(self, title: str, origin: str, link: str, event_id: int):
-        self.title = title
-        self.origin = origin
-        self.link = link
-        self.event_id = event_id
-
-    def json(self) -> StoryJSON:
-        return {
-            "title": self.title,
-            "origin": self.origin,
-            "link": self.link,
-            "event_id": self.event_id,
-        }
-
     @classmethod
     def find_by_name(cls, name: str) -> "StoryModel":
         return cls.query.filter_by(title=name).first()
