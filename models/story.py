@@ -1,18 +1,15 @@
-from typing import Dict, List, Union
+from typing import List
 
 from db import db
-
-StoryJSON = Dict[str, Union[int, str]]
-
 
 class StoryModel(db.Model):
     __tablename__ = "stories"
 
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(80))
-    origin = db.Column(db.String(80))
-    link = db.Column(db.String(255), unique=True)
-    event_id = db.Column(db.Integer, db.ForeignKey("events.id"))
+    title = db.Column(db.String(80), nullable=False)
+    origin = db.Column(db.String(80), nullable=False)
+    link = db.Column(db.String(255), nullable=False, unique=True)
+    event_id = db.Column(db.Integer, db.ForeignKey("events.id"), nullable=False)
     event = db.relationship("EventModel")
 
     @classmethod

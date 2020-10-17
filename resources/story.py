@@ -25,7 +25,7 @@ class Story(Resource):
             return {"message": f"A story with name '{name}' already exists."}, 400
         else:
             story_json = request.get_json()
-            story_json["name"] = name
+            story_json["title"] = name
 
             try:
                 story = story_schema.load(story_json)
@@ -37,7 +37,7 @@ class Story(Resource):
             except:
                 return {"message": "An error occurred inserting story."}, 500
 
-            return story.json(), 201
+            return story_schema.dump(story), 201
 
     @classmethod
     def delete(cls, name: str):
@@ -51,7 +51,7 @@ class Story(Resource):
         story_json = request.get_json()
         story = StoryModel.find_by_name(name)
         if story is None:
-            story_json["name"] = name
+            story_json["title"] = name
             try:
                 story = story_schema.load(story_json)
             except ValidationError as err:
