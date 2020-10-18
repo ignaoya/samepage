@@ -1,6 +1,6 @@
 from flask_restful import Resource
 from flask import request
-from flask_jwt import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_claims, fresh_jwt_required
 from models.story import StoryModel
 from models.event import EventModel
 from marshmallow import ValidationError
@@ -13,6 +13,7 @@ story_list_schema = StorySchema(many=True)
 
 class Story(Resource):
     @classmethod
+    @jwt_required
     def get(cls, name: str):
         story = StoryModel.find_by_name(name)
         if story:
@@ -20,17 +21,14 @@ class Story(Resource):
         return {"message": STORY_ERROR}, 400
 
     @classmethod
+    @fresh_jwt_required
     def post(cls, name: str):
         if StoryModel.find_by_name(name):
             return {"message": f"A story with name '{name}' already exists."}, 400
         else:
             story_json = request.get_json()
             story_json["title"] = name
-
-            try:
-                story = story_schema.load(story_json)
-            except ValidationError as err:
-                return err.messages, 400
+            story = story_schema.load(story_json)
 
             try:
                 story.save_to_db()
@@ -52,10 +50,7 @@ class Story(Resource):
         story = StoryModel.find_by_name(name)
         if story is None:
             story_json["title"] = name
-            try:
-                story = story_schema.load(story_json)
-            except ValidationError as err:
-                return err.messages, 400
+            story = story_schema.load(story_json)
         else:
             story.origin = story_json["origin"]
             story.link = story_json["link"]
