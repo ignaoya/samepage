@@ -20,6 +20,7 @@ DELETED = "User deleted succesfully."
 USER_NOT_FOUND = "No user found with that id."
 INVALID_CREDENTIALS = "Incorrect username or password."
 LOGOUT = "Succesfully logged out."
+NOT_CONFIRMED_ERROR = "You have not confirmed registration, please check your email <{}>."
 
 user_schema = UserSchema()
 
@@ -61,9 +62,12 @@ class UserLogin(Resource):
         user = UserModel.find_by_username(user_data.username)
 
         if user and safe_str_cmp(user_data.password, user.password):
-            access_token = create_access_token(identity=user.id, fresh=True)
-            refresh_token = create_refresh_token(user.id)
-            return {"access_token": access_token, "refresh_token": refresh_token}, 200
+            if user.activated:
+                access_token = create_access_token(identity=user.id, fresh=True)
+                refresh_token = create_refresh_token(user.id)
+                return {"access_token": access_token, "refresh_token": refresh_token}, 200
+            else:
+                return {"message": NOT_CONFIRMED_ERROR.format(user.username)}, 400
 
         return {"message": INVALID_CREDENTIALS}, 401
 
