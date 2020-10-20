@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, make_response, render_template
 from flask_restful import Resource
 from models.user import UserModel
 from schemas.user import UserSchema
@@ -96,6 +96,7 @@ class UserConfirm(Resource):
         if user:
             user.activated = True
             user.save_to_db()
-            return {'message': ACTIVATED}, 200
+            headers = {"Content-Type": "text/html"}
+            return make_response(render_template("confirmation_page.html", email=user.username), 200, headers)
         else:
             return {'message': USER_NOT_FOUND}, 404
