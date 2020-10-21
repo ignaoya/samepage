@@ -15,7 +15,8 @@ from flask_jwt_extended import (
 from blacklist import BLACKLIST
 
 HELP_TEXT = "Field required."
-CREATED = "User created succesfully."
+CREATED = "User created succesfully. Email has been sent to confirm registration."
+FAILD_TO_CREATE = "Failed to create user."
 DELETED = "User deleted succesfully."
 USER_NOT_FOUND = "No user found with that id."
 INVALID_CREDENTIALS = "Incorrect username or password."
@@ -31,10 +32,17 @@ class UserRegister(Resource):
     def post(cls):
         user = user_schema.load(request.get_json())
         if UserModel.find_by_username(user.username):
-            return {"message": f"User {data['username']} already exists."}, 400
+            return {"message": f"User {user.username} already exists."}, 400
 
-        user.save_to_db()
-        return {"message": CREATED}, 201
+        if UserModel.find_by_email(user.email):
+            return {"message": f"Email {user.email} already exists."}, 400
+
+        try:
+            user.save_to_db()
+            user.send_confirmation_email()
+            return {"message": CREATED}, 201
+        except:
+            return {"message": FAILED_TO_CREATE}, 500
 
 class User(Resource):
     @classmethod
@@ -58,7 +66,7 @@ class UserLogin(Resource):
     @classmethod
     def post(cls):
         user_json = request.get_json()
-        user_data = user_schema.load(user_json)
+        user_data = user_schema.load(user_json, partial=("email",))
 
         user = UserModel.find_by_username(user_data.username)
 
