@@ -73,3 +73,21 @@ class EventStoryList(Resource):
         return {
             "stories": [story_schema.dump(story) for story in EventModel.find_by_name(name).stories]
         }, 200
+
+class StoryVote(Resource):
+    @classmethod
+    def post(cls, name: str, vote: str):
+        story = StoryModel.find_by_name(name)
+        if story is None:
+            return {"message": STORY_ERROR}, 404
+        else:
+            if vote == "left":
+                story.up_vote_left()
+                story.save_to_db()
+                return {"message": "You voted left for this story!"}, 200
+            else:
+                story.up_vote_right()
+                story.save_to_db()
+                return {"message": "You voted right for this story!"}, 200
+
+

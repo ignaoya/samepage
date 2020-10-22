@@ -8,7 +8,7 @@ from ma import ma
 from security import authenticate, identity
 from resources.user import UserRegister, User, UserLogin, UserLogout, TokenRefresh, UserConfirm
 from resources.event import Event, EventList
-from resources.story import Story, StoryList, EventStoryList
+from resources.story import Story, StoryList, EventStoryList, StoryVote
 from blacklist import BLACKLIST
 
 app = Flask(__name__)
@@ -86,6 +86,7 @@ def handle_marshmallow_validation(err):
 api.add_resource(Event, "/event/<name>")
 api.add_resource(EventList, "/events")
 api.add_resource(Story, "/story/<name>")
+api.add_resource(StoryVote, "/story/<name>/<vote>")
 api.add_resource(StoryList, "/stories")
 api.add_resource(EventStoryList, "/stories/<name>")
 api.add_resource(UserRegister, "/register")

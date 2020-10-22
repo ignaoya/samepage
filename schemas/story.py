@@ -8,5 +8,5 @@ class StorySchema(ma.SQLAlchemyAutoSchema):
         model = StoryModel
         load_instance = True
         load_only = ("event",)
-        dump_only = ("id",)
+        dump_only = ("id", "left", "right")
         include_fk = True
