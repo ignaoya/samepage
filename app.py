@@ -12,7 +12,7 @@ from resources.story import Story, StoryList, EventStoryList, StoryVote
 from blacklist import BLACKLIST
 
 app = Flask(__name__)
-app.secret_key = "$am3+Pag3+K3y"
+app.secret_key = os.environ.get("APP_SECRET_KEY")
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
     "DATABASE_URL", "sqlite:///data.db"
 )
@@ -20,7 +20,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["PROPAGATE_EXCEPTIONS"] = True
 api = Api(app)
 
-app.config['JWT_SECRET_KEY'] = "$am3+Pag3+K3y"
+app.config['JWT_SECRET_KEY'] = os.environ.get("APP_SECRET_KEY")
 app.config['JWT_BLACKLIST_ENABLED'] = True
 app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
 jwt = JWTManager(app)
