@@ -13,6 +13,7 @@ from flask_jwt_extended import (
         get_raw_jwt,
         )
 from blacklist import BLACKLIST
+from libs.mailgun import MailgunException
 
 HELP_TEXT = "Field required."
 CREATED = "User created succesfully. Email has been sent to confirm registration."
@@ -41,6 +42,9 @@ class UserRegister(Resource):
             user.save_to_db()
             user.send_confirmation_email()
             return {"message": CREATED}, 201
+        except MailgunException as e:
+            user.delete_from_db()
+            return {"message": str(e)}, 500
         except:
             return {"message": FAILED_TO_CREATE}, 500
 
