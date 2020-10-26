@@ -43,7 +43,6 @@ class UserRegister(Resource):
             user.send_confirmation_email()
             return {"message": CREATED}, 201
         except MailgunException as e:
-            user.delete_from_db()
             return {"message": str(e)}, 500
         except:
             return {"message": FAILED_TO_CREATE}, 500
