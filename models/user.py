@@ -2,6 +2,7 @@ from flask import request, url_for
 from requests import Response
 from db import db
 from libs.mailgun import Mailgun
+from models.confirmation import ConfirmationModel
 
 
 class UserModel(db.Model):
