@@ -16,7 +16,7 @@ class Mailgun:
     MAILGUN_API_KEY = os.environ.get("MAILGUN_API_KEY")
 
     FROM_TITLE = 'Same Page'
-    FROM_EMAIL = ''
+    FROM_EMAIL = 'mailgun@'
 
     @classmethod
     def send_email(cls, email: List[str], subject: str, text: str, html: str) -> Response:
@@ -26,12 +26,11 @@ class Mailgun:
         if cls.MAILGUN_DOMAIN is None:
             raise MailgunException(FAILED_LOAD_DOMAIN)
 
-        link = request.url_root[:-1] + url_for("userconfirm", user_id=self.id)
         return post(
                 f"http://api.mailgun.net/v3/{cls.MAILGUN_DOMAIN}/messages",
                 auth=("api", cls.MAILGUN_API_KEY),
                 data={
-                    "from": f"{cls.FROM_TITLE} <{cls.FROM_EMAIL}>",
+                    "from": f"{cls.FROM_TITLE} <{cls.FROM_EMAIL}{cls.MAILGUN_DOMAIN}>",
                     "to": email,
                     "subject": subject,
                     "text": text,

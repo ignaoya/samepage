@@ -19,7 +19,7 @@ from models.confirmation import ConfirmationModel
 
 HELP_TEXT = "Field required."
 CREATED = "User created succesfully. Email has been sent to confirm registration."
-FAILD_TO_CREATE = "Failed to create user."
+FAILED_TO_CREATE = "Failed to create user."
 DELETED = "User deleted succesfully."
 USER_NOT_FOUND = "No user found with that id."
 INVALID_CREDENTIALS = "Incorrect username or password."

@@ -36,7 +36,7 @@ class Confirmation(Resource):
 
         headers = {"Contente-Type": "text/html"}
         return make_response(
-                render_template("confirmation_path.html", email=confirmation.user.email),
+                render_template("confirmation_page.html", email=confirmation.user.email),
                 200,
                 headers
                 )
@@ -62,7 +62,7 @@ class ConfirmationByUser(Resource):
         
 
     @classmethod
-    def post(cls):
+    def post(cls, user_id: int):
         user = UserModel.find_by_id(user_id)
         if not user:
             return {"message": USER_NOT_FOUND}, 404
