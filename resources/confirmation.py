@@ -5,7 +5,6 @@ from flask import make_response, render_template
 from flask_restful import Resource
 
 from libs.mailgun import MailgunException
-from resources.user import USER_NOT_FOUND
 from models.confirmation import ConfirmationModel
 from models.user import UserModel
 from schemas.confirmation import ConfirmationSchema
@@ -13,6 +12,7 @@ from schemas.confirmation import ConfirmationSchema
 confirmation_schema = ConfirmationSchema()
 
 NOT_FOUND = "Confirmation reference not found."
+USER_NOT_FOUND = "No user found with that id."
 EXPIRED = "The link has expired."
 ALREADY_CONFIRMED = "Registration has already been confirmed."
 RESEND_FAIL = "Internal server error, Failed to resend confirmation email."
